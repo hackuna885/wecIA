@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEC Upload IMG / PDF</title>
+  <!-- Sweet Alert -->
+  <link type="text/css" href="vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <!-- Notyf -->
+  <link type="text/css" href="vendor/notyf/notyf.min.css" rel="stylesheet">
+
+  <!-- Volt CSS -->
+  <link type="text/css" href="css/volt.css?v=1.0.15" rel="stylesheet">
+  <link rel="stylesheet" href="css/hover.css">
+  <link rel="stylesheet" href="css/style.css?v=1.0.15">
+
+  <!-- Core -->
+  <script src="vendor/bootstrap/dist/js/popper.min.js"></script>
+  <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-10 mx-auto my-5">
+        <div class="card border-0 shadow mb-4">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="h5">Consulta a WEC IA</h2>
+                <p class="mb-0">Sube tu documento y realiza consultas inteligentes</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="consultaForm" enctype="multipart/form-data">
+              <div class="row">
+                <!-- Zona de carga de archivo -->
+                <div class="col-md-12 mb-4">
+                  <label class="form-label fw-bold">Seleccionar imagen (JPG, JPEG) o PDF:</label>
+                  <div class="border rounded p-4 text-center" style="border: 2px dashed #dee2e6 !important; background-color: #f8f9fa; cursor: pointer; transition: all 0.3s ease;" 
+                       onmouseover="this.style.borderColor='#0d6efd'; this.style.backgroundColor='#e7f1ff';" 
+                       onmouseout="this.style.borderColor='#dee2e6'; this.style.backgroundColor='#f8f9fa';"
+                       onclick="document.getElementById('documento').click()">
+                    <svg class="mb-3" width="48" height="48" fill="none" stroke="#6c757d" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="mb-1 fw-bold text-muted">Haz clic para seleccionar o arrastra tu archivo aquí</p>
+                    <p class="mb-0 small text-muted">Formatos permitidos: JPG, JPEG, PDF</p>
+                    <input type="file" class="d-none" id="documento" name="documento" accept=".jpg, .jpeg, .pdf">
+                  </div>
+                </div>
+
+                <!-- Vista previa del documento -->
+                <div class="col-md-12 mb-4">
+                  <div id="documentoPrevioContainer" style="display: none;">
+                    <div class="card border-0 shadow-sm">
+                      <div class="card-body text-center">
+                        <img id="imagenPrevio" class="img-fluid rounded" src="" alt="Vista previa del documento" style="max-height: 400px; display: none;">
+                        <p id="pdfFileName" class="mb-0 fw-bold text-primary" style="display: none;"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Campo de consulta -->
+                <div class="col-md-12 mb-4">
+                  <label for="consulta" class="form-label fw-bold">Ingrese su consulta sobre el documento:</label>
+                  <textarea id="consulta" class="form-control" name="consulta" rows="6" placeholder="Escribe tu consulta aquí..." style="resize: vertical;"></textarea>
+                </div>
+
+                <!-- Botón de envío -->
+                <div class="col-md-12 mb-3">
+                  <button type="submit" id="submitButton" class="btn btn-primary btn-lg w-100">
+                    <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    Consultar
+                  </button>
+                </div>
+
+                <!-- Contenedor de resultados -->
+                <div class="col-md-12">
+                  <div id="resultadoContainer" class="card border-0 shadow-sm" style="display: none;">
+                    <div class="card-header bg-primary text-white">
+                      <h5 class="mb-0">Resultado:</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="resultado" class="mb-0" style="white-space: normal; word-wrap: break-word; font-family: inherit; background-color: #f8f9fa; padding: 1rem; border-radius: 0.375rem;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Vendor JS -->
+  <script src="vendor/onscreen/dist/on-screen.umd.min.js"></script>
+  <script src="vendor/nouislider/dist/nouislider.min.js"></script>
+  <script src="vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+  <script src="vendor/chartist/dist/chartist.min.js"></script>
+  <script src="vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+  <script src="vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+  <script src="vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+  <script src="vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+  <script src="vendor/notyf/notyf.min.js"></script>
+  <script src="vendor/simplebar/dist/simplebar.min.js"></script>
+  <script src="assets/js/volt.js"></script>
+  <script src="assets/js/three.min.js"></script>
+  <script src="assets/js/vanta.halo.min.js"></script>
+  
+  <script>
+    const documentoInput = document.getElementById("documento");
+    const documentoPrevioContainer = document.getElementById("documentoPrevioContainer");
+    const imagenPrevio = document.getElementById("imagenPrevio");
+    const pdfFileNameDisplay = document.getElementById("pdfFileName");
+    const consultaTextarea = document.getElementById("consulta");
+    const resultadoPre = document.getElementById("resultado");
+    const consultaForm = document.getElementById("consultaForm");
+    const submitButton = document.getElementById("submitButton");
+    const resultadoContainer = document.getElementById("resultadoContainer");
+
+    const dropArea = document.querySelector('.border.rounded.p-4');
+
+    // Prevenir comportamiento por defecto
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Efectos visuales
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, () => {
+        dropArea.style.borderColor = '#0d6efd';
+        dropArea.style.backgroundColor = '#e7f1ff';
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, () => {
+        dropArea.style.borderColor = '#dee2e6';
+        dropArea.style.backgroundColor = '#f8f9fa';
+      }, false);
+    });
+
+    // Manejar el drop
+    dropArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      
+      if (files.length > 0) {
+        documentoInput.files = files;
+        mostrarDocumento();
+      }
+    }, false);
+
+    const mostrarDocumento = () => {
+      if (documentoInput.files && documentoInput.files[0]) {
+        const file = documentoInput.files[0];
+        const fileType = file.type;
+
+        consultaTextarea.value = "";
+        resultadoPre.innerHTML = "";
+        resultadoContainer.style.display = "none";
+
+        if (fileType === "image/jpeg" || fileType === "image/png") {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            imagenPrevio.src = e.target.result;
+            imagenPrevio.style.display = "block";
+            pdfFileNameDisplay.style.display = "none";
+            documentoPrevioContainer.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else if (fileType === "application/pdf") {
+          imagenPrevio.style.display = "none";
+          pdfFileNameDisplay.textContent = `📄 ${file.name}`;
+          pdfFileNameDisplay.style.display = "block";
+          documentoPrevioContainer.style.display = "block";
+        } else {
+          documentoPrevioContainer.style.display = "none";
+          imagenPrevio.src = "";
+          imagenPrevio.style.display = "none";
+          pdfFileNameDisplay.style.display = "none";
+        }
+      } else {
+        documentoPrevioContainer.style.display = "none";
+        imagenPrevio.src = "";
+        imagenPrevio.style.display = "none";
+        pdfFileNameDisplay.style.display = "none";
+      }
+    };
+
+    const escaparCaracteresHTML = (texto) => {
+      return texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    };
+
+    documentoInput.addEventListener("change", mostrarDocumento);
+
+    consultaForm.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      const consulta = consultaTextarea.value.trim();
+      const documento = documentoInput.files[0];
+
+      // if (!documento) {
+      //   alert("Por favor, seleccione un documento (imagen o PDF) para consultar.");
+      //   return;
+      // }
+
+      if (!consulta) {
+        alert("Por favor, ingrese su consulta sobre el documento.");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Espere, por favor...';
+      resultadoPre.innerHTML = "Cargando...";
+      resultadoContainer.style.display = "block";
+
+      const datosFormulario = new FormData();
+      datosFormulario.append("consulta", consulta);
+      datosFormulario.append("documento", documento);
+
+      try {
+        const respuesta = await fetch("app/php/consulta.php", {
+          method: 'POST',
+          body: datosFormulario
+        });
+
+        if (!respuesta.ok) {
+          throw new Error(`HTTP error! status: ${respuesta.status}`);
+        }
+
+        const data = await respuesta.json();
+        console.log(data.mensaje);
+        let htmlContent = data.mensaje;
+        htmlContent = htmlContent.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+        resultadoPre.innerHTML = htmlContent;
+
+      } catch (error) {
+        console.error('Error en la solicitud fetch:', error);
+        resultadoPre.innerHTML = `Error: No se pudo procesar la consulta. (${escaparCaracteresHTML(error.message)})`;
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>Consultar';
+      }
+    });
+  </script>
+  
+</body>
+
+</html>
